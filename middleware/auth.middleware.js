@@ -5,7 +5,7 @@ const auth = (req, res, next) => {
   const decoded = jwt.verify(token, "masai");
   try {
     if (decoded) {
-      req.body.userID = decoded.userId;
+      req.body.userID = decoded.userID;
       next();
     } else {
       res.status(400).send({ msg: "Wrong credentials" });

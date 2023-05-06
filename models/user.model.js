@@ -6,7 +6,7 @@ const userSchema = mongoose.Schema(
     email: String,
     password: String,
     isAdmin: Boolean,
-    userId: String,
+    userID: String,
   },
   { versionKey: false }
 );
