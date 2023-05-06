@@ -9,7 +9,6 @@ bookRouter.post("/", async (req, res) => {
   const payload = req.body;
   const token = req.headers.authorization;
   const decoded = jwt.verify(token, "masai");
-
   const user = await UserModel.findOne({ _id: decoded.userID });
 
   try {
@@ -59,11 +58,40 @@ bookRouter.get("/:id", async (req, res) => {
   }
 });
 
-// Books with category
-bookRouter.get("/", async (req, res) => {
+// Patch Api
+bookRouter.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const payload = req.body;
+  const token = req.headers.authorization;
+  const decoded = jwt.verify(token, "masai");
+  const user = await UserModel.findOne({ _id: decoded.userID });
   try {
+    if (user.isAdmin) {
+      await BookModel.findByIdAndUpdate({ _id: id }, payload);
+      res.status(204).send({ msg: "Book details are updated" });
+    } else {
+      res.status(400).send({ msg: "Not authorized" });
+    }
   } catch (err) {
-    res.status(400).send({ msg: "No books with this category" });
+    res.status(400).send({ msg: "Not authorized" });
+  }
+});
+
+// Delete Api
+bookRouter.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  const token = req.headers.authorization;
+  const decoded = jwt.verify(token, "masai");
+  const user = await UserModel.findOne({ _id: decoded.userID });
+  try {
+    if (user.isAdmin) {
+      await BookModel.findByIdAndDelete({ _id: id });
+      res.status(202).send({ msg: "Book details are deleted" });
+    } else {
+      res.status(400).send({ msg: "Not authorized" });
+    }
+  } catch (err) {
+    res.status(400).send({ msg: "Not authorized" });
   }
 });
 
