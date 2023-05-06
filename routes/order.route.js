@@ -23,4 +23,22 @@ orderRouter.post("/order", async (req, res) => {
   }
 });
 
+// Orders Api
+orderRouter.get("/orders", async (req, res) => {
+  try {
+    const books = await BookModel.find();
+    const data = await OrderModel.find();
+    for (let i = 0; i < data.length; i++) {
+      data[i].user = await UserModel.findOne({ _id: data[i].user });
+      for (let j = 0; j < data[i].books.length; j++) {
+        data[i].books[j] = books.filter((e) => e._id == data[i].books[j])[0];
+      }
+    }
+
+    res.status(200).send();
+  } catch (err) {
+    res.status(400).send({ msg: "Unable to process the request" });
+  }
+});
+
 module.exports = { orderRouter };
